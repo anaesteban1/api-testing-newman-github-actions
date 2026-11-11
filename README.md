@@ -89,10 +89,11 @@ El archivo `reports/newman.json` se genera localmente y está excluido de Git. L
 
 - Ejecución local de Newman: **20 solicitudes, 20 aserciones aprobadas y 0 fallidas**.
 - La ruta `/health` respondió `200` con `{"status":"ok","service":"gestion-tareas-academicas"}`.
+- GitHub Actions: ejecución real **correcta** para el commit `ae4a11c` ([run 42977502886](https://github.com/anaesteban1/api-testing-newman-github-actions/actions/runs/42977502886)); instalación, health check, Newman y publicación del artefacto concluyeron correctamente.
 - Enlace del repositorio: <https://github.com/anaesteban1/api-testing-newman-github-actions>
 - Despliegue público: pendiente de crear/vincular el servicio Blueprint en Render; esta URL se actualizará cuando se confirme el despliegue.
 
-Los resultados de CI y Render se añadirán aquí después de observar las ejecuciones reales. No se presentan como completados hasta que el proveedor los confirme.
+Newman usa dependencias de desarrollo con avisos de vulnerabilidad reportados por `npm audit`; las dependencias de producción (`npm audit --omit=dev`) no reportan vulnerabilidades. No se aplicaron actualizaciones forzadas que sustituyen Newman por una versión principal anterior.
 
 ## Estructura
 
