@@ -16,6 +16,6 @@
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "newman": "^6.2.1"
+    "newman": "^6.2.3"
   }
 }
