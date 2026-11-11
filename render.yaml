@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: gestion-tareas-academicas
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
