@@ -47,6 +47,63 @@ function normalize(input) {
 
 app.get('/health', (_req, res) => res.status(200).json({ status: 'ok', service: 'gestion-tareas-academicas' }));
 
+app.get('/', (_req, res) => res.type('html').send(`<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="API REST para organizar y consultar tareas académicas.">
+  <title>Gestión de Tareas Académicas · API</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #172033; background: #f4f7fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 50% 0, #e2ecff 0, transparent 48%), #f4f7fb; }
+    main { width: min(820px, calc(100% - 32px)); margin: 0 auto; padding: 72px 0 56px; }
+    .hero, .panel { border: 1px solid #e1e7f0; border-radius: 20px; background: #fff; box-shadow: 0 16px 48px #22345b0d; }
+    .hero { padding: clamp(28px, 6vw, 52px); }
+    .eyebrow { color: #425fc5; font-size: 12px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 14px 0 12px; max-width: 620px; font-size: clamp(32px, 6vw, 48px); line-height: 1.08; letter-spacing: -.04em; }
+    .intro { max-width: 620px; color: #596579; font-size: 17px; line-height: 1.7; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .button { display: inline-flex; align-items: center; min-height: 44px; padding: 0 17px; border-radius: 10px; background: #3558c8; color: #fff; font-weight: 650; text-decoration: none; }
+    .button.secondary { border: 1px solid #dce3ef; background: #fff; color: #26344d; }
+    .panel { margin-top: 20px; padding: 26px clamp(22px, 5vw, 36px); }
+    h2 { margin: 0 0 17px; font-size: 18px; }
+    ul { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 9px; color: #596579; line-height: 1.5; }
+    .method { min-width: 57px; color: #27634c; font: 700 12px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { color: #202d44; font-size: 13px; }
+    a.endpoint { color: #3156bd; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    footer { padding: 22px 4px 0; color: #778196; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero" aria-labelledby="welcome-title">
+      <div class="eyebrow">API REST · Node.js</div>
+      <h1 id="welcome-title">Gestión de Tareas Académicas</h1>
+      <p class="intro">Organiza tus actividades académicas desde una API sencilla. Consulta tareas, filtra por asignatura o estado y gestiona cada tarea mediante solicitudes HTTP.</p>
+      <div class="actions">
+        <a class="button" href="/api/tasks">Explorar tareas</a>
+        <a class="button secondary" href="/health">Estado del servicio</a>
+      </div>
+    </section>
+    <section class="panel" aria-labelledby="endpoints-title">
+      <h2 id="endpoints-title">Endpoints disponibles</h2>
+      <ul>
+        <li><span class="method">GET</span><a class="endpoint" href="/health"><code>/health</code></a><span>Estado de la API.</span></li>
+        <li><span class="method">GET</span><a class="endpoint" href="/api/tasks"><code>/api/tasks</code></a><span>Lista tareas; admite filtros <code>?status=</code> y <code>?subject=</code>.</span></li>
+        <li><span class="method">GET</span><code>/api/tasks/:id</code><span>Consulta una tarea por su identificador.</span></li>
+        <li><span class="method">POST</span><a class="endpoint" href="/api/tasks"><code>/api/tasks</code></a><span>Crea una tarea.</span></li>
+        <li><span class="method">PATCH</span><code>/api/tasks/:id</code><span>Actualiza parcialmente una tarea.</span></li>
+        <li><span class="method">DELETE</span><code>/api/tasks/:id</code><span>Elimina una tarea.</span></li>
+      </ul>
+    </section>
+    <footer>Las operaciones de creación, actualización y eliminación se realizan con el método HTTP indicado.</footer>
+  </main>
+</body>
+</html>`));
+
 app.get('/api/tasks', (req, res) => {
   let result = [...tasks.values()];
   if (req.query.status) result = result.filter((task) => task.status === req.query.status);

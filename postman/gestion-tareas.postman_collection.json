@@ -13,97 +13,102 @@
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('responde 200 y estado ok', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().status).to.eql('ok'); });"] } }]
     },
     {
-      "name": "02 · Listado inicial",
+      "name": "02 · Página de bienvenida",
+      "request": { "method": "GET", "url": "{{baseUrl}}/" },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('muestra bienvenida y enlaces a endpoints', function () { pm.response.to.have.status(200); pm.expect(pm.response.headers.get('Content-Type')).to.include('text/html'); pm.expect(pm.response.text()).to.include('Gestión de Tareas Académicas'); pm.expect(pm.response.text()).to.include('href=\\\"/api/tasks\\\"'); pm.expect(pm.response.text()).to.include('href=\\\"/health\\\"'); });"] } }]
+    },
+    {
+      "name": "03 · Listado inicial",
       "request": { "method": "GET", "url": "{{baseUrl}}/api/tasks" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('devuelve una colección vacía', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().data).to.be.an('array'); pm.expect(pm.response.json().total).to.eql(0); });"] } }]
     },
     {
-      "name": "03 · Crear tarea válida",
+      "name": "04 · Crear tarea válida",
       "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"title\":\"Entregar informe de laboratorio\",\"description\":\"Preparar resultados y conclusiones\",\"subject\":\"Biología\",\"dueDate\":\"2030-06-15\",\"priority\":\"alta\"}" }, "url": "{{baseUrl}}/api/tasks" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('crea con 201 y valores por defecto', function () { pm.response.to.have.status(201); var task = pm.response.json().data; pm.expect(task.id).to.be.a('string'); pm.expect(task.status).to.eql('pendiente'); pm.expect(task.priority).to.eql('alta'); pm.expect(pm.response.headers.get('Location')).to.include(task.id); pm.collectionVariables.set('taskId', task.id); });"] } }]
     },
     {
-      "name": "04 · Consultar tarea creada",
+      "name": "05 · Consultar tarea creada",
       "request": { "method": "GET", "url": "{{baseUrl}}/api/tasks/{{taskId}}" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('recupera la tarea por id', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().data.title).to.eql('Entregar informe de laboratorio'); });"] } }]
     },
     {
-      "name": "05 · Filtrar por estado",
+      "name": "06 · Filtrar por estado",
       "request": { "method": "GET", "url": "{{baseUrl}}/api/tasks?status=pendiente" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('filtra por estado', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().total).to.eql(1); pm.expect(pm.response.json().data[0].status).to.eql('pendiente'); });"] } }]
     },
     {
-      "name": "06 · Filtrar por asignatura",
+      "name": "07 · Filtrar por asignatura",
       "request": { "method": "GET", "url": "{{baseUrl}}/api/tasks?subject=Biología" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('filtra por asignatura sin distinguir mayúsculas', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().total).to.eql(1); });"] } }]
     },
     {
-      "name": "07 · Actualizar tarea",
+      "name": "08 · Actualizar tarea",
       "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"en_progreso\",\"priority\":\"media\"}" }, "url": "{{baseUrl}}/api/tasks/{{taskId}}" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('actualiza parcialmente la tarea', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().data.status).to.eql('en_progreso'); pm.expect(pm.response.json().data.title).to.eql('Entregar informe de laboratorio'); });"] } }]
     },
     {
-      "name": "08 · Rechazar PATCH vacío",
+      "name": "09 · Rechazar PATCH vacío",
       "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}" }, "url": "{{baseUrl}}/api/tasks/{{taskId}}" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('rechaza actualización vacía', function () { pm.response.to.have.status(400); pm.expect(pm.response.json().error.code).to.eql('VALIDATION_ERROR'); });"] } }]
     },
     {
-      "name": "09 · Rechazar tarea sin título",
+      "name": "10 · Rechazar tarea sin título",
       "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"description\":\"Sin título\"}" }, "url": "{{baseUrl}}/api/tasks" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('valida título obligatorio', function () { pm.response.to.have.status(400); pm.expect(pm.response.json().error.details.join(' ')).to.include('obligatorio'); });"] } }]
     },
     {
-      "name": "10 · Rechazar título corto",
+      "name": "11 · Rechazar título corto",
       "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"title\":\"ab\"}" }, "url": "{{baseUrl}}/api/tasks" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('valida longitud mínima del título', function () { pm.response.to.have.status(400); pm.expect(pm.response.json().error.code).to.eql('VALIDATION_ERROR'); });"] } }]
     },
     {
-      "name": "11 · Rechazar prioridad inválida",
+      "name": "12 · Rechazar prioridad inválida",
       "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"title\":\"Tarea válida\",\"priority\":\"urgente\"}" }, "url": "{{baseUrl}}/api/tasks" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('rechaza prioridad fuera del catálogo', function () { pm.response.to.have.status(400); pm.expect(pm.response.json().error.details.join(' ')).to.include('prioridad'); });"] } }]
     },
     {
-      "name": "12 · Rechazar fecha inválida",
+      "name": "13 · Rechazar fecha inválida",
       "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"title\":\"Tarea válida\",\"dueDate\":\"2026-02-30\"}" }, "url": "{{baseUrl}}/api/tasks" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('rechaza fechas de calendario inexistentes', function () { pm.response.to.have.status(400); pm.expect(pm.response.json().error.details.join(' ')).to.include('AAAA-MM-DD'); });"] } }]
     },
     {
-      "name": "13 · Rechazar campos desconocidos",
+      "name": "14 · Rechazar campos desconocidos",
       "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"title\":\"Tarea válida\",\"admin\":true}" }, "url": "{{baseUrl}}/api/tasks" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('rechaza campos no permitidos', function () { pm.response.to.have.status(400); pm.expect(pm.response.json().error.details.join(' ')).to.include('admin'); });"] } }]
     },
     {
-      "name": "14 · Recurso inexistente",
+      "name": "15 · Recurso inexistente",
       "request": { "method": "GET", "url": "{{baseUrl}}/api/tasks/no-existe" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('responde 404 con error estructurado', function () { pm.response.to.have.status(404); pm.expect(pm.response.json().error.code).to.eql('TASK_NOT_FOUND'); });"] } }]
     },
     {
-      "name": "15 · PATCH de recurso inexistente",
+      "name": "16 · PATCH de recurso inexistente",
       "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"status\":\"completada\"}" }, "url": "{{baseUrl}}/api/tasks/no-existe" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('PATCH inexistente responde 404', function () { pm.response.to.have.status(404); pm.expect(pm.response.json().error.code).to.eql('TASK_NOT_FOUND'); });"] } }]
     },
     {
-      "name": "16 · JSON malformado",
+      "name": "17 · JSON malformado",
       "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"title\":" }, "url": "{{baseUrl}}/api/tasks" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('maneja JSON malformado con 400', function () { pm.response.to.have.status(400); pm.expect(pm.response.json().error.code).to.eql('INVALID_JSON'); });"] } }]
     },
     {
-      "name": "17 · Ruta desconocida",
+      "name": "18 · Ruta desconocida",
       "request": { "method": "GET", "url": "{{baseUrl}}/ruta-inexistente" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('ruta desconocida devuelve error controlado', function () { pm.response.to.have.status(404); pm.expect(pm.response.json().error.code).to.eql('ROUTE_NOT_FOUND'); });"] } }]
     },
     {
-      "name": "18 · Eliminar tarea",
+      "name": "19 · Eliminar tarea",
       "request": { "method": "DELETE", "url": "{{baseUrl}}/api/tasks/{{taskId}}" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('elimina sin cuerpo con 204', function () { pm.response.to.have.status(204); pm.expect(pm.response.text()).to.eql(''); });"] } }]
     },
     {
-      "name": "19 · Confirmar eliminación",
+      "name": "20 · Confirmar eliminación",
       "request": { "method": "GET", "url": "{{baseUrl}}/api/tasks/{{taskId}}" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('la tarea eliminada ya no existe', function () { pm.response.to.have.status(404); pm.expect(pm.response.json().error.code).to.eql('TASK_NOT_FOUND'); });"] } }]
     },
     {
-      "name": "20 · DELETE de recurso inexistente",
+      "name": "21 · DELETE de recurso inexistente",
       "request": { "method": "DELETE", "url": "{{baseUrl}}/api/tasks/no-existe" },
       "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('DELETE inexistente responde 404', function () { pm.response.to.have.status(404); pm.expect(pm.response.json().error.code).to.eql('TASK_NOT_FOUND'); });"] } }]
     }

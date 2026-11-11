@@ -24,6 +24,7 @@ Todas las respuestas de recursos usan el contenedor `{ "data": ... }`. Los error
 
 | Método | Ruta | Descripción | Respuestas principales |
 |---|---|---|---|
+| `GET` | `/` | Página de bienvenida y enlaces a la API | `200` |
 | `GET` | `/health` | Estado del servicio | `200` |
 | `GET` | `/api/tasks` | Lista tareas; admite `?status=` y `?subject=` | `200` |
 | `GET` | `/api/tasks/:id` | Obtiene una tarea | `200`, `404` |
@@ -60,7 +61,7 @@ La API local queda disponible en `http://localhost:3000`. Comprueba la disponibi
 
 ## Pruebas automatizadas
 
-La colección versionada está en `postman/gestion-tareas.postman_collection.json`. Contiene 20 solicitudes secuenciales: salud, listado, creación, consulta, filtros, actualización, eliminación, validaciones, JSON malformado y rutas o recursos inexistentes.
+La colección versionada está en `postman/gestion-tareas.postman_collection.json`. Contiene 21 solicitudes secuenciales: salud, página de bienvenida, listado, creación, consulta, filtros, actualización, eliminación, validaciones, JSON malformado y rutas o recursos inexistentes.
 
 Con la API ejecutándose en otra terminal:
 
@@ -87,7 +88,7 @@ El archivo `reports/newman.json` se genera localmente y está excluido de Git. L
 
 ## Resultados verificados
 
-- Ejecución local de Newman: **20 solicitudes, 20 aserciones aprobadas y 0 fallidas**.
+- Ejecución local de Newman: **21 solicitudes, 21 aserciones aprobadas y 0 fallidas**.
 - La ruta `/health` respondió `200` con `{"status":"ok","service":"gestion-tareas-academicas"}`.
 - Prueba de producción: **20 solicitudes, 20 aserciones aprobadas y 0 fallidas** contra Render. El primer `/health` respondió `200`; el servicio está en plan gratuito.
 - GitHub Actions: ejecución real **correcta** para el commit `8394ca0` ([run 43109672163](https://github.com/anaesteban1/api-testing-newman-github-actions/actions/runs/43109672163)); instalación, health check, Newman y publicación del artefacto concluyeron correctamente.
