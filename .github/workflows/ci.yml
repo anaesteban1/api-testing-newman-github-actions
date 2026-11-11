@@ -1,0 +1,46 @@
+name: API · Newman CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Pruebas de API con Newman
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Iniciar API
+        run: |
+          mkdir -p reports
+          npm start > /tmp/api.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/health; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/api.log
+          exit 1
+      - name: Ejecutar colección Newman
+        run: npm run test:newman
+      - name: Publicar reportes Newman
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-newman-${{ github.run_number }}
+          path: reports/newman.json
+          if-no-files-found: warn
+          retention-days: 30
