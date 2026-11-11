@@ -83,15 +83,16 @@ El archivo `reports/newman.json` se genera localmente y está excluido de Git. L
 
 `.github/workflows/ci.yml` instala las dependencias con `npm ci`, inicia la API, espera `/health`, ejecuta Newman y publica `newman.json` como artefacto de GitHub Actions incluso si una etapa falla. El artefacto se conserva 30 días.
 
-`render.yaml` define un servicio web Node.js con `npm ci`, `npm start` y `/health` como health check. `autoDeployTrigger: checksPass` pide a Render esperar a que pasen las verificaciones de CI del commit antes del despliegue automático. El Blueprint debe estar vinculado al repositorio en una cuenta de Render para que exista el servicio.
+`render.yaml` define un servicio web Node.js en el plan gratuito, con `npm ci`, `npm start` y `/health` como health check. El Blueprint está vinculado al repositorio y a `main`; `autoDeployTrigger: checksPass` hace que Render espere a que pasen las verificaciones de CI del commit antes del despliegue automático.
 
 ## Resultados verificados
 
 - Ejecución local de Newman: **20 solicitudes, 20 aserciones aprobadas y 0 fallidas**.
 - La ruta `/health` respondió `200` con `{"status":"ok","service":"gestion-tareas-academicas"}`.
-- GitHub Actions: ejecución real **correcta** para el commit `ae4a11c` ([run 42977502886](https://github.com/anaesteban1/api-testing-newman-github-actions/actions/runs/42977502886)); instalación, health check, Newman y publicación del artefacto concluyeron correctamente.
+- Prueba de producción: **20 solicitudes, 20 aserciones aprobadas y 0 fallidas** contra Render. El primer `/health` respondió `200`; el servicio está en plan gratuito.
+- GitHub Actions: ejecución real **correcta** para el commit `97e04e2` ([run 42977879556](https://github.com/anaesteban1/api-testing-newman-github-actions/actions/runs/42977879556)); instalación, health check, Newman y publicación del artefacto concluyeron correctamente.
 - Enlace del repositorio: <https://github.com/anaesteban1/api-testing-newman-github-actions>
-- Despliegue público: pendiente de crear/vincular el servicio Blueprint en Render; esta URL se actualizará cuando se confirme el despliegue.
+- URL pública de Render: <https://gestion-tareas-academicas.onrender.com>
 
 Newman usa dependencias de desarrollo con avisos de vulnerabilidad reportados por `npm audit`; las dependencias de producción (`npm audit --omit=dev`) no reportan vulnerabilidades. No se aplicaron actualizaciones forzadas que sustituyen Newman por una versión principal anterior.
 
