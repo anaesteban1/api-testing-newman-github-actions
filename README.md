@@ -89,10 +89,10 @@ El archivo `reports/newman.json` se genera localmente y está excluido de Git. L
 ## Resultados verificados
 
 - Ejecución local de Newman: **21 solicitudes, 21 aserciones aprobadas y 0 fallidas**.
-- La ruta `/health` respondió `200` con `{"status":"ok","service":"gestion-tareas-academicas"}`.
-- Prueba de producción: **20 solicitudes, 20 aserciones aprobadas y 0 fallidas** contra Render. El primer `/health` respondió `200`; el servicio está en plan gratuito.
-- GitHub Actions: ejecución real **correcta** para el commit `8394ca0` ([run 43109672163](https://github.com/anaesteban1/api-testing-newman-github-actions/actions/runs/43109672163)); instalación, health check, Newman y publicación del artefacto concluyeron correctamente.
-- Despliegue automático: Render desplegó el commit `8394ca0` después de pasar ese workflow de GitHub Actions; el panel reportó `Deploy succeeded` y `After CI Checks Pass`.
+- La ruta `/` respondió `200 text/html` con la bienvenida y enlaces a `/api/tasks` y `/health`; `/health` respondió `200` con `{"status":"ok","service":"gestion-tareas-academicas"}`.
+- Prueba de producción: **21 solicitudes, 21 aserciones aprobadas y 0 fallidas** contra Render.
+- GitHub Actions: ejecución real **correcta** para el commit `d39bc5e` ([run 43115321463](https://github.com/anaesteban1/api-testing-newman-github-actions/actions/runs/43115321463)); instalación, health check, Newman y publicación del artefacto concluyeron correctamente.
+- Despliegue automático: Render desplegó el commit `d39bc5e` después de pasar ese workflow de GitHub Actions; GitHub registró el estado de despliegue `success`.
 - Enlace del repositorio: <https://github.com/anaesteban1/api-testing-newman-github-actions>
 - URL pública de Render: <https://gestion-tareas-academicas.onrender.com>
 
